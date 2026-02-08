@@ -1,0 +1,6 @@
+
+{
+  "name": "Non-Profit Lead Dossier Generator",
+  "description": "A professional analysis tool for consultants to evaluate non-profit financial health and operational pain points using Form 990s and state provider profiles.",
+  "requestFramePermissions": []
+}

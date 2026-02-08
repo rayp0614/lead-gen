@@ -1,0 +1,46 @@
+{
+  "memories": [
+    {
+      "id": "mem_1769600507137_f83iguchz",
+      "content": "DDSSCRAPER CODEBASE EXPLORATION - Complete Architecture Analysis\n\nCURRENT ARCHITECTURE:\n======================\n\nBACKEND (FastAPI - Python):\n- Location: c:\\DDSScraper\\main.py, scraper.py\n- Port: 8000\n- Technology Stack: FastAPI, uvicorn, requests, beautifulsoup4, pdfplumber\n\nKey APIs:\n1. GET /api/towns - Returns list of towns with DDS provider PDFs from portal.ct.gov\n2. GET /api/providers?town={town} - Scrapes town PDF and extracts provider profile URLs\n3. GET /api/fetch-pdf?url={url}&name={name} - Downloads PDF from portal.ct.gov (whitelist only)\n4. GET / - Serves static index.html\n5. GET /health - Health check\n\nData Flow:\n1. Scrapes https://portal.ct.gov/dds/searchable-archive/providerprofile/general/provider-by-town\n2. Downloads town PDFs from https://portal.ct.gov/-/media/DDS/provider_town/\n3. Parses PDFs with pdfplumber to extract provider profile URLs\n4. Whitelists URLs to only allow portal.ct.gov/provider_town and /provider_alpha paths\n5. Caches results (towns 24hrs, providers 6hrs)\n\nFRONTEND (React + TypeScript/Vite):\n- Location: c:\\DDSScraper\\NPResearch\\NPResearch\\\n- Port: 5173 (Vite dev) or 3000 (configured)\n- Technology Stack: React 19, Vite, @google/genai SDK, TypeScript\n\nKey Components:\n1. DDSProviderWidget - Main integration point (components/DDSProviderWidget.tsx)\n2. FileUploadSection - Form 990 PDF upload\n3. QualityFileSection - Quality report upload\n4. WebResearchSection - Website URL input\n5. AnalysisDisplay - Results viewer\n6. LeadList - Saved leads management\n\nState Management:\n- useAppState hook with useReducer\n- LocalStorage persistence for leads and API key\n- Redux-like action dispatch pattern\n\nIntegration Flow:\n1. Frontend calls backend /api/towns endpoint\n2. Frontend calls /api/providers for selected town\n3. Frontend calls /api/fetch-pdf to download PDFs\n4. Downloads open in browser via blob URL\n\nGEMINI INTEGRATION (geminiService.ts):\n- Model: gemini-2.0-flash\n- Files sent: Form 990 PDFs, Quality Service Review PDF\n- Output: JSON-structured dossier with financials, quality assessment, pain points\n\nAnalysis includes:\n- 5-year financial history (revenue, expenses, net income, assets, net assets)\n- Quality assessment from QSR PDFs\n- Service types identification\n- Deep research (optional) with web search for news/sentiment\n- Pain points and decision maker identification\n- Cold email hook generation\n\nOPPORTUNITIES FOR AUTOMATION:\n=============================\n\n1. AUTO-FETCH FORM 990s FROM PROPUBLICA:\n   - ProPublica Nonprofit Explorer has API/searchable archive\n   - Can fetch 990 PDFs by EIN or organization name\n   - Integration point: FileUploadSection could have \"Auto-fetch from ProPublica\" button\n   - Would bypass manual PDF upload\n\n2. AUTO-FETCH PROVIDER PROFILES FROM DDS PORTAL:\n   - Already partially done via scraper.py\n   - Could add batch download capability\n   - Could pre-cache provider profiles for analysis\n   - Could integrate with Gemini to auto-analyze providers\n\n3. AUTO-FETCH QUALITY REPORTS:\n   - DDS portal likely has quality report PDFs\n   - Could scrape similar to how provider PDFs are fetched\n   - QualityFileSection could have \"Auto-load latest QSR\" option\n   - Would require discovering quality report URL patterns\n\n4. PIPELINE OPPORTUNITIES:\n   - Create background job system to auto-fetch all three document types\n   - Pre-cache analysis results\n   - Create provider comparison reports\n   - Batch analysis for multiple organizations\n   - Schedule periodic re-analysis\n\nINTEGRATION POINTS WITH BACKEND:\n================================\n\nCurrent HTTP endpoints:\n- /api/towns - Already optimized with caching\n- /api/providers - Already optimized with caching\n- /api/fetch-pdf - Whitelist security check in place\n\nNew endpoints to add:\n- /api/fetch-from-propublica - Auto-fetch 990 from ProPublica by EIN/name\n- /api/fetch-quality-report - Auto-fetch latest QSR from DDS portal\n- /api/batch-analyze - Queue multiple organizations for analysis\n- /api/auto-analyze?provider_id=X - Auto-analyze provider profile\n\nFILES TO UNDERSTAND:\n- Backend: main.py (API routes), scraper.py (HTML parsing, PDF fetching)\n- Frontend: App.tsx (main orchestration), DDSProviderWidget.tsx (DDS integration)\n- Service: geminiService.ts (Gemini API calls), analysisPrompt.ts (prompt template)\n\nSECURITY NOTES:\n- Backend whitelist ensures only portal.ct.gov PDFs downloaded\n- Frontend stores API key in localStorage\n- CORS configured for localhost dev\n- URL validation on PDF fetch\n\nDEPLOYMENT:\n- Both services run locally on dev\n- start.bat orchestrates both servers\n- Production would need ALLOWED_ORIGINS environment variable\n",
+      "type": "config",
+      "tags": [
+        "config",
+        "python",
+        "typescript",
+        "react",
+        "api",
+        "deployment",
+        "architecture",
+        "ddsscraper",
+        "integration",
+        "automation"
+      ],
+      "timestamp": "2026-01-28T11:41:47.075Z",
+      "accessCount": 1,
+      "lastAccessed": "2026-02-04T13:26:55.786Z",
+      "lastVerified": "2026-01-28T11:41:47.075Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1769633674720_ahtb358qp",
+      "content": "Fixed Form 990 PDF fallback logic in DDSScraper:\n\nPROBLEM: \"No Form 990 available\" error when searching for \"March Inc Of Manchester\" even though ProPublica has filings. Root cause: Most recent filing (2023) has pdf_url: null, but older filings (2022) have PDFs.\n\nFIX 1 - propublica.py fetch_form990_pdf():\n- Changed from \"use first filing\" to \"iterate through filings to find most recent with pdf_url\"\n- Now logs which year it found: \"Found PDF for year {year} (most recent with PDF)\"\n\nFIX 2 - main.py fetch_all_docs():\n- Changed form990_year to iterate filings and find first with pdf_url\n- Now logs: \"Form 990 fetched: {bytes} bytes (year: {year})\"\n\nUSER ACTION NEEDED: Restart backend server in their development environment to apply changes.",
+      "type": "config",
+      "tags": [
+        "config",
+        "ddsscraper",
+        "fix",
+        "propublica",
+        "form990",
+        "pdf-fallback"
+      ],
+      "timestamp": "2026-01-28T20:54:34.719Z",
+      "context": "DDSScraper data collection simplification project",
+      "accessCount": 1,
+      "lastAccessed": "2026-02-04T13:26:55.786Z",
+      "lastVerified": "2026-01-28T20:54:34.719Z",
+      "status": "fresh"
+    }
+  ],
+  "lastUpdated": "2026-01-28T20:54:34.719Z"
+}

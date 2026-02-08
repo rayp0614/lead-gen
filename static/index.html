@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DDS Provider Scraper</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1>DDS Providers by Town</h1>
+        <p>Select a town, choose providers, and download their profile PDFs.</p>
+      </header>
+
+      <section class="panel">
+        <label class="label" for="townSelect">Town</label>
+        <select id="townSelect">
+          <option value="">Loading towns...</option>
+        </select>
+        <div id="status" class="status"></div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <button id="selectAllBtn" type="button">Select all</button>
+          <button id="clearAllBtn" type="button">Clear</button>
+          <button id="downloadBtn" type="button" class="primary">Download selected</button>
+        </div>
+        <div id="providers" class="providers"></div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
