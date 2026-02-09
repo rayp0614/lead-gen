@@ -9,8 +9,9 @@ type Props = {
 };
 
 const DEFAULT_API_BASE =
+  (import.meta as { env?: Record<string, string> }).env?.VITE_API_URL ||
   (import.meta as { env?: Record<string, string> }).env?.VITE_DDS_API_BASE_URL ||
-  'http://127.0.0.1:8000';
+  'http://localhost:8000';
 
 const DDSProviderWidget: React.FC<Props> = ({ apiBaseUrl = DEFAULT_API_BASE, title }) => {
   const [towns, setTowns] = useState<Town[]>([]);
